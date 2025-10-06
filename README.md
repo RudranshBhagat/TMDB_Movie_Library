@@ -40,7 +40,7 @@ For a complete list of available schematics (such as `components`, `directives`,
 ng generate --help
 ```
 
-## Building
+## Building artifacts for deployment
 
 To build (build artifacts for deployment) the project run:
 
