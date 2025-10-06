@@ -7,13 +7,13 @@ This project was generated using [Angular CLI](https://github.com/angular/angula
    - Go to [TMDB API Settings](https://www.themoviedb.org/settings/api) to generate your **API Key** and **TMDB Token**.
    - Open the file `src\app\environments\environment.ts` and add your credentials:
 
-   ```typescript
-  /* export const environment = {
+   Add in below code >>
+   export const environment = {
      tmdbApiKey: 'Add_api_key_here',
      tmdbBaseUrl: 'https://api.themoviedb.org/3',
      tmdbToken: 'Add_Tmdb_Token_here'
-   };*/
-   
+   };
+
 ## Development server
 
 To start a local development server, run:
