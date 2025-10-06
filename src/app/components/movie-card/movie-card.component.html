@@ -1,10 +1,20 @@
-<div class="card shadow-sm">
+<div
+  class="card movie-card shadow-lg border-0 rounded-3 overflow-hidden"
+  #card
+  (mouseenter)="animateIn(card)"
+  (mouseleave)="animateOut(card)"
+  (load)="animateOnLoad(card)"
+>
   <img
-    [src]="'https://image.tmdb.org/t/p/w200' + movie.poster_path"
+    [src]="'https://image.tmdb.org/t/p/w300' + movie.poster_path"
+    class="card-img-top"
     alt="{{ movie.title }}"
   />
-  <h4>{{ movie.title }}</h4>
-  <button class="btn btn-primary"  (click)="onAction()">
-    {{ isWatchlist ? "Remove from Watchlist" : "Add to Watchlist" }}
-  </button>
+  <div class="card-body text-center">
+    <h5 class="card-title fw-bold text-truncate">{{ movie.title }}</h5>
+    <button class="btn btn-sm btn-primary mt-2 px-3" (click)="onAction()">
+      <i class="bi" [ngClass]="isWatchlist ? 'bi-bookmark-dash' : 'bi-bookmark-plus'"></i>
+      {{ isWatchlist ? 'Remove from Watchlist' : 'Add to Watchlist' }}
+    </button>
+  </div>
 </div>

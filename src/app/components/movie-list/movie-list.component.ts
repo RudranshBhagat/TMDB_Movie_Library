@@ -1,98 +1,73 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, QueryList, ViewChildren, ElementRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { MovieService } from '../../services/movie.service';
 import { MovieCardComponent } from '../movie-card/movie-card.component';
 import { HttpClientModule } from '@angular/common/http';
+import gsap from 'gsap';
 
 @Component({
   selector: 'app-movie-list',
   standalone: true,
-  imports: [CommonModule, FormsModule, HttpClientModule],
+  imports: [CommonModule, FormsModule, MovieCardComponent, HttpClientModule],
   templateUrl: './movie-list.component.html',
   styleUrls: ['./movie-list.component.css']
 })
 export class MovieListComponent implements OnInit {
   movies: any[] = [];
   searchQuery = '';
-  viewMode: 'grid' | 'list' = 'grid';
-  isLoading = false;
 
-  constructor(private movieService: MovieService) { }
+  // Access movie cards
+  @ViewChildren('card', { read: ElementRef }) cards!: QueryList<ElementRef>;
+
+  constructor(private movieService: MovieService) {}
 
   ngOnInit(): void {
     this.loadPopular();
   }
 
   loadPopular() {
-    this.isLoading = true;
-    this.movieService.getPopularMovies().subscribe({
-      next: (res: any) => {
-        this.movies = res.results;
-        this.isLoading = false;
-      },
-      error: (err) => {
-        console.error('Error loading movies:', err);
-        this.isLoading = false;
-      }
+    this.movieService.getPopularMovies().subscribe((res: any) => {
+      this.movies = res.results;
+      setTimeout(() => this.animateCards(), 100); // wait for DOM update
     });
   }
 
   searchMovies() {
-    if (!this.searchQuery.trim()) {
+    if (!this.searchQuery) {
       this.loadPopular();
       return;
     }
-
-    this.isLoading = true;
-    this.movieService.searchMovies(this.searchQuery).subscribe({
-      next: (res: any) => {
-        this.movies = res.results;
-        this.isLoading = false;
-      },
-      error: (err) => {
-        console.error('Error searching movies:', err);
-        this.isLoading = false;
-      }
+    this.movieService.searchMovies(this.searchQuery).subscribe((res: any) => {
+      this.movies = res.results;
+      setTimeout(() => this.animateCards(), 100);
     });
   }
 
   addToWatchlist(movie: any) {
-    console.log('Adding to watchlist:', movie);
-
-    try {
-      // Get current watchlist from localStorage
-      let watchlist = JSON.parse(localStorage.getItem('watchlist') || '[]');
-
-      // Check if movie already exists
-      const exists = watchlist.some((m: any) => m.id === movie.id);
-
-      if (!exists) {
-        watchlist.push(movie);
-        localStorage.setItem('watchlist', JSON.stringify(watchlist));
-        this.showSuccessMessage(`${movie.title} added to watchlist!`);
-      } else {
-        this.showInfoMessage(`${movie.title} is already in your watchlist`);
-      }
-    } catch (error) {
-      console.error('Error adding to watchlist:', error);
-      this.showErrorMessage('Failed to add to watchlist');
+    let watchlist = JSON.parse(localStorage.getItem('watchlist') || '[]');
+    if (!watchlist.some((m: any) => m.id === movie.id)) {
+      watchlist.push(movie);
+      localStorage.setItem('watchlist', JSON.stringify(watchlist));
     }
+    alert(`${movie.title} added to watchlist`);
   }
 
-  setView(mode: 'grid' | 'list') {
-    this.viewMode = mode;
+private animateCards() {
+  if (this.cards && this.cards.length) {
+    gsap.fromTo(
+      this.cards.map(c => c.nativeElement),
+      { opacity: 0, y: 60, scale: 0.9 },
+      {
+        opacity: 1,
+        y: 0,
+        scale: 1,
+        duration: 0.8,
+        stagger: 0.15,
+        ease: 'back.out(1.7)', // makes cards pop
+      }
+    );
   }
+}
 
-  private showSuccessMessage(message: string) {
-    alert(message);
-  }
-
-  private showInfoMessage(message: string) {
-    alert(message);
-  }
-
-  private showErrorMessage(message: string) {
-    alert(message);
-  }
 }
