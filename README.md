@@ -41,4 +41,7 @@ This will compile your project and store the build artifacts in the `dist/` dire
 ## Project Evidance
 
 ![Screenshot 1](./evidence/1.Movie_Home_page.png)
-![Screenshot 2](images/screenshot2.png)
+![Screenshot 2](./evidence/2.homepage_list_view.png)
+![Screenshot 3](./evidence/3.search_result.png)
+![Screenshot 4](./evidence/4.watchlist.png)
+
