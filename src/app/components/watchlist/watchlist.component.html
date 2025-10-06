@@ -1,13 +1,68 @@
-<h2>My Watchlist</h2>
-<div class="container my-4">
-  <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-lg-4 g-3">
-    <div class="col" *ngFor="let movie of watchlist">
-      <app-movie-card
-        [movie]="movie"
-        [isWatchlist]="true"
-        (action)="removeFromWatchlist($event)">
-      </app-movie-card>
+<div class="watchlist-container">
+  <!-- Header Section -->
+  <div class="watchlist-header">
+    <div class="header-content">
+      <div class="header-text">
+        <h1 class="watchlist-title">
+          <i class="fa fa-bookmark"></i>
+          My Watchlist
+        </h1>
+        <p class="watchlist-subtitle">Your curated collection of movies to watch</p>
+      </div>
+      <div class="watchlist-stats">
+        <div class="stat-badge">
+          <i class="fa fa-film"></i>
+          <span>{{ watchlist.length }} {{ watchlist.length === 1 ? 'Movie' : 'Movies' }}</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Movies Grid -->
+  <div class="watchlist-grid" *ngIf="watchlist.length > 0">
+    <div class="movie-card-wrapper" *ngFor="let movie of watchlist; let i = index">
+      <div class="movie-card" [style.animation-delay]="(i * 0.05) + 's'">
+        <div class="movie-poster">
+          <img
+            [src]="'https://image.tmdb.org/t/p/w500' + movie.poster_path"
+            [alt]="movie.title"
+            class="poster-img"
+            onerror="this.src='https://via.placeholder.com/500x750?text=No+Image'"
+          />
+          <div class="poster-overlay">
+            <button class="remove-from-list-btn" (click)="removeFromWatchlist(movie); $event.stopPropagation()">
+              <i class="fa fa-trash"></i>
+              <span>Remove from Watchlist</span>
+            </button>
+          </div>
+          <div class="rating-badge" *ngIf="movie.vote_average">
+            <i class="fa fa-star"></i>
+            {{ movie.vote_average.toFixed(1) }}
+          </div>
+        </div>
+        
+        <div class="movie-info">
+          <h3 class="movie-title">{{ movie.title }}</h3>
+          <p class="movie-date" *ngIf="movie.release_date">
+            {{ movie.release_date | date: 'yyyy' }}
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Empty State -->
+  <div class="empty-watchlist" *ngIf="watchlist.length === 0">
+    <div class="empty-content">
+      <div class="empty-icon">
+        <i class="fa fa-bookmark-o"></i>
+      </div>
+      <h2 class="empty-title">Your watchlist is empty</h2>
+      <p class="empty-text">Start adding movies you'd like to watch later</p>
+      <a routerLink="/" class="browse-btn">
+        <i class="fa fa-search"></i>
+        Browse Movies
+      </a>
     </div>
   </div>
 </div>
-

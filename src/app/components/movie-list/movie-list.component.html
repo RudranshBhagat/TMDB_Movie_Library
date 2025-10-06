@@ -1,89 +1,120 @@
-<div class="container my-3">
-  <div class="input-group">
-    <input
-      type="text"
-      class="form-control"
-      placeholder="Search movies..."
-      [(ngModel)]="searchQuery"
-    />
-    <button class="btn btn-primary" type="button" (click)="searchMovies()">
-      Search
-    </button>
-  </div>
-
-  <!-- View Switch Buttons -->
-  <div class="mt-3 d-flex justify-content-end gap-2">
-    <button
-      class="btn btn-outline-primary btn-sm"
-      [class.active]="viewMode === 'grid'"
-      (click)="setView('grid')"
-    >
-      <i class="fa fa-th-large"></i> Grid
-    </button>
-    <button
-      class="btn btn-outline-primary btn-sm"
-      [class.active]="viewMode === 'list'"
-      (click)="setView('list')"
-    >
-      <i class="fa fa-list"></i> List
-    </button>
-    <button
-      class="btn btn-outline-primary btn-sm"
-      [class.active]="viewMode === 'compact'"
-      (click)="setView('compact')"
-    >
-      <i class="fa fa-th"></i> Compact
-    </button>
-  </div>
-</div>
-
-<!-- GRID VIEW -->
-<div class="container my-4" *ngIf="viewMode === 'grid'">
-  <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-lg-4 g-3">
-    <div class="col" *ngFor="let movie of movies">
-      <app-movie-card
-        [movie]="movie"
-        (action)="addToWatchlist($event)"
-      ></app-movie-card>
-    </div>
-  </div>
-</div>
-
-<!-- LIST VIEW -->
-<div class="container my-4" *ngIf="viewMode === 'list'">
-  <div
-    class="card mb-3 p-2 shadow-sm"
-    *ngFor="let movie of movies"
-    style="display: flex; flex-direction: row; align-items: center"
-  >
-    <img
-      [src]="'https://image.tmdb.org/t/p/w200' + movie.poster_path"
-      class="rounded"
-      style="width: 80px; height: 120px; object-fit: cover; margin-right: 15px"
-    />
-    <div class="flex-grow-1">
-      <h5>{{ movie.title }}</h5>
-      <p class="text-muted mb-1">
-        {{ movie.release_date | date: 'longDate' }}
-      </p>
-      <button class="btn btn-sm btn-primary" (click)="addToWatchlist(movie)">
-        Add to Watchlist
+<div class="movie-list-container">
+  <!-- Search Header -->
+  <div class="search-section">
+    <div class="search-wrapper">
+      <i class="fa fa-search search-icon"></i>
+      <input
+        type="text"
+        class="search-input"
+        placeholder="Search for movies, series, and more..."
+        [(ngModel)]="searchQuery"
+        (keyup.enter)="searchMovies()"
+      />
+      <button class="search-btn" type="button" (click)="searchMovies()">
+        <span>Search</span>
+        <i class="fa fa-arrow-right"></i>
       </button>
     </div>
-  </div>
-</div>
 
-<!-- COMPACT VIEW -->
-<div class="container my-4" *ngIf="viewMode === 'compact'">
-  <ul class="list-group">
-    <li
-      class="list-group-item d-flex justify-content-between align-items-center"
-      *ngFor="let movie of movies"
-    >
-      <span>{{ movie.title }}</span>
-      <button class="btn btn-sm btn-outline-primary" (click)="addToWatchlist(movie)">
-        +
-      </button>
-    </li>
-  </ul>
+    <!-- View Toggle -->
+    <div class="view-toggle-wrapper">
+      <div class="view-toggle">
+        <button 
+          class="toggle-btn"
+          [class.active]="viewMode === 'grid'"
+          (click)="setView('grid')"
+        >
+          <i class="fa fa-th"></i>
+          <span>Grid</span>
+        </button>
+        <button 
+          class="toggle-btn"
+          [class.active]="viewMode === 'list'"
+          (click)="setView('list')"
+        >
+          <i class="fa fa-list"></i>
+          <span>List</span>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Results Count -->
+  <div class="results-header" *ngIf="movies.length > 0">
+    <h2 class="results-title">
+      {{ searchQuery ? 'Search Results' : 'Popular Movies' }}
+    </h2>
+    <span class="results-count">{{ movies.length }} movies</span>
+  </div>
+
+  <!-- GRID VIEW -->
+  <div class="grid-container" *ngIf="viewMode === 'grid' && movies.length > 0">
+    <div class="movie-grid">
+      <div class="movie-card-wrapper" *ngFor="let movie of movies">
+        <div class="movie-card">
+          <div class="movie-poster">
+            <img
+              [src]="'https://image.tmdb.org/t/p/w500' + movie.poster_path"
+              [alt]="movie.title"
+              class="poster-img"
+              onerror="this.src='https://via.placeholder.com/500x750?text=No+Image'"
+            />
+            <div class="poster-overlay">
+              <button class="quick-add-btn" (click)="addToWatchlist(movie); $event.stopPropagation()">
+                <i class="fa fa-plus"></i>
+                <span>Add to Watchlist</span>
+              </button>
+            </div>
+            <div class="rating-badge" *ngIf="movie.vote_average">
+              <i class="fa fa-star"></i>
+              {{ movie.vote_average.toFixed(1) }}
+            </div>
+          </div>
+          <div class="movie-info">
+            <h3 class="movie-title">{{ movie.title }}</h3>
+            <p class="movie-date">{{ movie.release_date | date: 'yyyy' }}</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- LIST VIEW -->
+  <div class="list-container" *ngIf="viewMode === 'list' && movies.length > 0">
+    <div class="movie-list-item" *ngFor="let movie of movies">
+      <div class="list-item-poster">
+        <img
+          [src]="'https://image.tmdb.org/t/p/w200' + movie.poster_path"
+          [alt]="movie.title"
+          class="list-poster-img"
+          onerror="this.src='https://via.placeholder.com/200x300?text=No+Image'"
+        />
+      </div>
+      <div class="list-item-content">
+        <div class="list-item-header">
+          <h3 class="list-item-title">{{ movie.title }}</h3>
+          <div class="list-item-rating" *ngIf="movie.vote_average">
+            <i class="fa fa-star"></i>
+            <span>{{ movie.vote_average.toFixed(1) }}</span>
+          </div>
+        </div>
+        <p class="list-item-date" *ngIf="movie.release_date">
+          <i class="fa fa-calendar"></i>
+          {{ movie.release_date | date: 'MMM d, yyyy' }}
+        </p>
+        <p class="list-item-overview" *ngIf="movie.overview">{{ movie.overview }}</p>
+        <button class="list-add-btn" (click)="addToWatchlist(movie); $event.stopPropagation()">
+          <i class="fa fa-plus"></i>
+          Add to Watchlist
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Empty State -->
+  <div class="empty-state" *ngIf="movies.length === 0">
+    <i class="fa fa-film empty-icon"></i>
+    <h3>No movies found</h3>
+    <p>Try searching for something else</p>
+  </div>
 </div>
