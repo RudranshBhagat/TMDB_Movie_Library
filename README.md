@@ -7,13 +7,13 @@ This project was generated using [Angular CLI](https://github.com/angular/angula
    - Go to [TMDB API Settings](https://www.themoviedb.org/settings/api) to generate your **API Key** and **TMDB Token**.
    - Open the file `src\app\environments\environment.ts` and add your credentials:
 
-   Add in below code >>
+   ```typescript
    export const environment = {
      tmdbApiKey: 'Add_api_key_here',
      tmdbBaseUrl: 'https://api.themoviedb.org/3',
      tmdbToken: 'Add_Tmdb_Token_here'
    };
-
+   ```
 ## Development server
 
 To start a local development server, run:
@@ -42,13 +42,18 @@ ng generate --help
 
 ## Building
 
-To build the project run:
+To build (build artifacts for deployment) the project run:
 
 ```bash
 ng build
+
+ng build --configuration production --output-path=dist/movie-library
+
 ```
 
-This will compile your project and store the build artifacts in the `dist/` directory. By default, the production build optimizes your application for performance and speed.
+This will compile your project and store the build artifacts in the `dist/movie-library` directory. By default, the production build optimizes your application for performance and speed.
+
+
 
 
 
